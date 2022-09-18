@@ -4,7 +4,7 @@ import sys
 
 def get_file_handler_error(formatter: logging.Formatter) -> logging.FileHandler:
     """Файловый обработчик только для ошибок и предупреждений"""
-    file_handler_error = logging.FileHandler('errors_log.log')
+    file_handler_error = logging.FileHandler('log/errors_log.log')
     file_handler_error.setLevel(logging.WARNING)
     file_handler_error.setFormatter(formatter)
     return file_handler_error
@@ -12,7 +12,7 @@ def get_file_handler_error(formatter: logging.Formatter) -> logging.FileHandler:
 
 def get_file_handler_all(formatter: logging.Formatter) -> logging.FileHandler:
     """Файловый обработчик для всех сообщений"""
-    file_handler_all = logging.FileHandler('all_log.log')
+    file_handler_all = logging.FileHandler('log/all_log.log')
     file_handler_all.setLevel(logging.DEBUG)
     file_handler_all.setFormatter(formatter)
     return file_handler_all
