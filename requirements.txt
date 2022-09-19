@@ -1,4 +1,5 @@
 python-dotenv == 0.20.0
 aiogram == 2.22.1
+PyQiwiP2P == 2.0.6
 
 # psycopg2 == 2.9.3
