@@ -1,4 +1,4 @@
-python-dotenv == 0.20.0
+python-dotenv == 0.21.0
 aiogram == 2.22.1
 PyQiwiP2P == 2.0.6
 

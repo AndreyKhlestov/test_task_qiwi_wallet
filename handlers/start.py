@@ -3,6 +3,8 @@ from keyboards.default_inline_keyboards import inline_keyboards
 from log.loger import logger
 from states.user_states import UserState
 from aiogram.types import Message, CallbackQuery
+from utils.check_pay import check_pay
+from loader import p2p
 
 
 @dp.message_handler(commands=['start'])
@@ -22,9 +24,9 @@ async def start(message: Message):
 
 @dp.callback_query_handler(state=UserState.start)
 async def refill_button(call: CallbackQuery):
-    logger.info(f'Пользователь {call.message.from_user.full_name} нажал на кнопку "пополнить баланс"')
+    logger.info(f'Пользователь {call.from_user.full_name} нажал на кнопку "пополнить баланс"')
     await UserState.next()
-    await call.message.edit_text(f'Введите сумму, на которую вы хотите пополнить баланс')
+    await call.message.edit_text('Введите сумму, на которую вы хотите пополнить баланс')
 
 
 @dp.message_handler(state=UserState.start)
