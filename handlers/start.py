@@ -1,32 +1,31 @@
 from loader import dp
-from keyboards.default_inline_keyboards import inline_keyboards
 from log.loger import logger
 from states.user_states import UserState
 from aiogram.types import Message, CallbackQuery
-from utils.check_pay import check_pay
-from loader import p2p
+from utils.main_menu import main_menu
 
 
 @dp.message_handler(commands=['start'])
 async def start(message: Message):
     logger.info(f'Пользователь {message.from_user.full_name} запустил бота')
     await UserState.start.set()
-    await message.answer(f'Привет, {message.from_user.full_name}')
-
-    directions_list = ['Пополнить баланс']
-    keyboards = inline_keyboards(directions_list)
-    await message.answer(
-        f'Я - бот для пополнения баланса.\n'
-        f'Нажмите на кнопку, чтобы пополнить баланс',
-        reply_markup=keyboards
-    )
+    await message.answer(f'Привет, {message.from_user.full_name}\n'
+                         f'Я - бот для пополнения баланса.')
+    await main_menu(message)
 
 
-@dp.callback_query_handler(state=UserState.start)
+# @dp.callback_query_handler(func=lambda c: c.data == 'button1')
+# async def process_callback_button1(callback_query: types.CallbackQuery):
+
+@dp.callback_query_handler(state=UserState.main_menu)
+# @dp.callback_query_handler(text_contains='menu_')
+# @dp.callback_query_handler(lambda call: call.data == 'c')
+# @dp.callback_query_handler(text="Пополнить баланс")
 async def refill_button(call: CallbackQuery):
     logger.info(f'Пользователь {call.from_user.full_name} нажал на кнопку "пополнить баланс"')
     await UserState.next()
-    await call.message.edit_text('Введите сумму, на которую вы хотите пополнить баланс')
+    await call.answer()
+    await call.message.answer('Введите сумму, на которую вы хотите пополнить баланс')
 
 
 @dp.message_handler(state=UserState.start)

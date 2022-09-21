@@ -3,7 +3,6 @@ from aiogram.types import Message
 from keyboards.default_inline_keyboards import inline_keyboards
 from loader import p2p
 from pyqiwip2p.p2p_types.errors import QiwiError
-from utils.check_pay import check_pay
 from aiogram.dispatcher import FSMContext
 
 

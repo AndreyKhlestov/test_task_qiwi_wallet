@@ -3,17 +3,11 @@ from log.loger import logger
 from states.user_states import UserState
 from aiogram.types import Message, CallbackQuery
 from utils.check_num import check_num
-from utils.check_pay import check_pay
+from config import lifetime
 from loader import p2p
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.dispatcher import FSMContext
 
-
-# Получать сумму от пользователя и создавать киви счёт с полученной суммой (live_time 5 минут)
-# Две кнопки прикрутить к сообщению об успешном создании платежа:
-# Одна кнопка является ссылкой на оплату счета
-# Вторая кнопка проверяет, прошёл ли платеж, если да - записывать сумму в баланс пользователя в боте, если нет -
-# писать, что платеж не прошёл
 
 @dp.message_handler(state=UserState.refill)
 async def refill_num_money(message: Message, state: FSMContext):
@@ -22,7 +16,7 @@ async def refill_num_money(message: Message, state: FSMContext):
         num_money = check
         logger.info(f'Пользователь {message.from_user.full_name} ввел сумму {num_money} руб. для пополнения')
 
-        new_bill = await p2p.bill(amount=num_money, lifetime=5)
+        new_bill = await p2p.bill(amount=num_money, lifetime=lifetime)
         await state.update_data(bill_id=new_bill.bill_id)
 
         keyboard = InlineKeyboardMarkup()
@@ -43,7 +37,8 @@ async def check_pay(call: CallbackQuery, state: FSMContext):
     bill_id = (await state.get_data())['bill_id']
     status = (await p2p.check(bill_id=bill_id)).status
     if status == 'PAID':
-        await call.message.edit_text('Оплата прошла успешно')
+        await call.message.edit_text(call.message.text)
+        await call.message.answer('Оплата прошла успешно')
         await UserState.next()
     else:
-        await call.message.edit_text('Платеж не прошёл')
+        await call.answer('Платеж не прошёл', show_alert=True)
