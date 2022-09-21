@@ -1,5 +1,5 @@
 from loader import dp
-from log.loger import logger
+from my_logger.loger import logger
 from states.user_states import UserState
 from aiogram.types import Message, CallbackQuery
 from utils.check_num import check_num

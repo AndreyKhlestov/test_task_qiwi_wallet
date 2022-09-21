@@ -1,6 +1,6 @@
 from aiogram.utils import executor
 from loader import dp
-from log.loger import logger
+from my_logger.loger import logger
 import handlers
 
 
