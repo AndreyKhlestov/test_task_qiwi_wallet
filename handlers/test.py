@@ -28,7 +28,7 @@ async def welcome(message: Message, state: FSMContext):
     # new_bill = await p2p.bill(bill_id=1234, amount=60, lifetime=7)
 
     # отмена счета
-    # await p2p.reject(bill_id=bill_id)
+    # await p2p.reject(bill_id=bil l_id)
 
     # Проверим статус выставленного счета
     # print((await p2p.check(bill_id=bill_id)).status)

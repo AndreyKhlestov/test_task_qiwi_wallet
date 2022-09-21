@@ -10,4 +10,4 @@ else:
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 QIWI_PRIV_KEY = os.getenv('QIWI_PRIV_KEY')
-lifetime = 5
+lifetime = 1
