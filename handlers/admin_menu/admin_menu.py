@@ -5,6 +5,7 @@ from aiogram.types import Message, CallbackQuery
 from keyboards.default_inline_keyboards import inline_keyboards
 from handlers.main_menu import main_menu
 from handlers.admin_menu.send_logs import send_logs
+from handlers.admin_menu.send_users import send_users
 
 
 @dp.message_handler(commands=['admin'], state='*')
@@ -35,9 +36,12 @@ async def refill_button(call: CallbackQuery):
     await call.message.answer(text)  # Вывод выбранной команды
 
     if text == 'Выход из панели админа':
+        logger.info(f'{call.message.from_user.full_name} вышел из панели админа')
         await main_menu(call.message)
     elif text == 'Выгрузка логов':
+        logger.info(f'{call.message.from_user.full_name} выполнил выгрузку логов')
         await send_logs(call)
     elif text == 'Выгрузка пользователей':
+        logger.info(f'{call.message.from_user.full_name} выполнил выгрузку пользователей')
         await send_users(call)
 
