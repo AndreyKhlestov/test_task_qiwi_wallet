@@ -14,6 +14,6 @@ QIWI_PRIV_KEY = os.getenv('QIWI_PRIV_KEY')
 
 id_admin = 465654693
 
-lifetime = 1
+lifetime = 5
 
 names_levels_log = ['debug', 'info', 'warning', 'error', 'critical']

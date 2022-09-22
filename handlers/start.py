@@ -32,4 +32,3 @@ async def start(message: Message):
             await start_admin_menu(message)
         else:
             await main_menu(message)
-

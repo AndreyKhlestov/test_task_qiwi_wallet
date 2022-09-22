@@ -7,6 +7,7 @@ from config import lifetime
 from loader import p2p
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.dispatcher import FSMContext
+from database.models import Users
 
 
 @dp.message_handler(state=UserState.refill)
@@ -36,14 +37,20 @@ async def refill_num_money(message: Message, state: FSMContext):
 async def check_pay(call: CallbackQuery, state: FSMContext):
     logger.info(f'Пользователь {call.from_user.full_name} проверяет оплату')
     bill_id = (await state.get_data())['bill_id']
-    status = (await p2p.check(bill_id=bill_id)).status
+    bill = await p2p.check(bill_id=bill_id)
+    status = bill.status
     if status == 'WAITING':
         await call.answer('Счет ожидает оплаты', show_alert=True)
     else:
         await call.message.edit_text(call.message.text)  # Удаляем у предыдущего сообщения кнопки путем редактирования
 
         if status == 'PAID':
+            user_id = call.from_user.id
+            old_balance = Users.select().where(Users.user_id == user_id).get().balance
+            amount = float(bill.amount)
+            Users.update(balance=old_balance + amount).where(Users.user_id == user_id).execute()
             text = 'Оплата прошла успешно'
+
         elif status == 'EXPIRED':
             text = 'Счет отклонен'
         else:
