@@ -1,28 +1,35 @@
 from loader import dp
 from my_logger.loger import logger
 from states.user_states import UserState
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 from handlers.main_menu import main_menu
+from config import id_admin
+from handlers.admin_menu.admin_menu import start_admin_menu
+from database.models import Users
 
 
-@dp.message_handler(commands=['start'], state=[None, UserState.finish])
+@dp.message_handler(commands=['start'])
 async def start(message: Message):
-    logger.info(f'Пользователь {message.from_user.full_name} запустил бота')
     await UserState.start.set()
-    await message.answer(f'Привет, {message.from_user.full_name}\n'
-                         f'Я - бот для пополнения баланса.')
-    await main_menu(message)
 
+    user_name = message.from_user.full_name
+    user_id = message.from_user.id
+    user_info = Users.select().where(Users.user_id == user_id)
 
-@dp.callback_query_handler(state=UserState.main_menu)
-async def refill_button(call: CallbackQuery):
-    logger.info(f'Пользователь {call.from_user.full_name} нажал на кнопку "пополнить баланс"')
-    await UserState.next()
-    await call.answer()
-    await call.message.answer('Введите сумму, на которую вы хотите пополнить баланс')
+    if len(user_info) == 0:
+        logger.info(f'Новый пользователь {user_name} добавлен в базу')
+        user_info = Users.create(user_id=user_id, user_name=user_name, balance=0, block=False)
 
+    if user_info.get().block:
+        logger.info(f'Заблокированный пользователь {user_name} попытался запустить бота')
+        await message.answer('Вы заблокированы')
+    else:
+        logger.info(f'Пользователь {user_name} запустил бота')
+        await message.answer(f'Привет, {user_name}\n'
+                             f'Я - бот для пополнения баланса.')
 
-@dp.message_handler(state=UserState.start)
-async def error_refill_button(message: Message):
-    logger.info(f'Пользователь {message.from_user.full_name} написал боту вместо нажатия кнопки "Пополнить баланс"')
-    await message.answer('Пожалуйста, нажмите на кнопку "Пополнить баланс" под сообщением выше')
+        if id_admin == user_id:
+            await start_admin_menu(message)
+        else:
+            await main_menu(message)
+

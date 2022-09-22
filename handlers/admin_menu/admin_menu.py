@@ -1,16 +1,20 @@
 from loader import dp
 from my_logger.loger import logger
 from states.user_states import UserState
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message, CallbackQuery
 from keyboards.default_inline_keyboards import inline_keyboards
 from handlers.main_menu import main_menu
+from handlers.admin_menu.send_logs import send_logs
 
 
 @dp.message_handler(commands=['admin'], state='*')
-async def admin_menu(message: Message):
+async def start_admin_menu(message: Message):
     logger.info(f'Пользователь {message.from_user.full_name} зашел в панель админа')
     await UserState.admin_menu.set()
+    await admin_menu(message)
 
+
+async def admin_menu(message: Message):
     buttons = ['Выгрузка пользователей',
                'Выгрузка логов',
                'Изменить баланс пользователя',
@@ -19,7 +23,7 @@ async def admin_menu(message: Message):
                ]
     keyboard = inline_keyboards(buttons)
 
-    await message.answer(f'Приветствую {message.from_user.full_name}, вы в панели администратора\n'
+    await message.answer(f'Вы в панели администратора\n'
                          f'Выберите нужную команду:', reply_markup=keyboard)
 
 
@@ -32,8 +36,8 @@ async def refill_button(call: CallbackQuery):
 
     if text == 'Выход из панели админа':
         await main_menu(call.message)
+    elif text == 'Выгрузка логов':
+        await send_logs(call)
+    elif text == 'Выгрузка пользователей':
+        await send_users(call)
 
-    # logger.info(f'Пользователь {call.from_user.full_name} нажал на кнопку "пополнить баланс"')
-    # await UserState.next()
-    # await call.answer()
-    # await call.message.answer('Введите сумму, на которую вы хотите пополнить баланс')

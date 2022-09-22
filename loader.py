@@ -4,14 +4,12 @@ from config import BOT_TOKEN
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from config import QIWI_PRIV_KEY
 from pyqiwip2p import AioQiwiP2P
-# from database.models import db
-# from database.models import db, HealthDirection, Categories, Questions, Answers
+from database.models import db, Users
 
 
 # соединение с базой данных
-# with db:
-#     db.create_tables([HealthDirection, Categories, Questions, Answers])
-# db.connect()
+with db:
+    db.create_tables([Users])
 
 # присвоение токена
 bot = Bot(token=BOT_TOKEN)
