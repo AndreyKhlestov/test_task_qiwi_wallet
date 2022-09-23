@@ -8,3 +8,6 @@ class UserState(StatesGroup):  # состояния пользователя
     wait_pay = State()
     finish = State()
     admin_menu = State()
+    edit_balance = State()
+    input_edit_balance = State()
+    block_user = State()

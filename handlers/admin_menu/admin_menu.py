@@ -6,16 +6,17 @@ from keyboards.default_inline_keyboards import inline_keyboards
 from handlers.main_menu import main_menu
 from handlers.admin_menu.send_logs import send_logs
 from handlers.admin_menu.send_users import send_users
+from handlers.admin_menu.input_id_user import input_id_user
 
 
 @dp.message_handler(commands=['admin'], state='*')
 async def start_admin_menu(message: Message):
     logger.info(f'Пользователь {message.from_user.full_name} зашел в панель админа')
-    await UserState.admin_menu.set()
     await admin_menu(message)
 
 
 async def admin_menu(message: Message):
+    await UserState.admin_menu.set()
     buttons = ['Выгрузка пользователей',
                'Выгрузка логов',
                'Изменить баланс пользователя',
@@ -44,4 +45,9 @@ async def refill_button(call: CallbackQuery):
     elif text == 'Выгрузка пользователей':
         logger.info(f'{call.message.from_user.full_name} выполнил выгрузку пользователей')
         await send_users(call)
-
+    elif text == 'Изменить баланс пользователя':
+        await UserState.edit_balance.set()
+        await input_id_user(call)
+    elif text == 'Блокировка пользователя':
+        await UserState.block_user.set()
+        await input_id_user(call)
