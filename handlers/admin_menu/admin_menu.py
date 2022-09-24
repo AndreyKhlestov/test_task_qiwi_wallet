@@ -3,16 +3,10 @@ from my_logger.loger import logger
 from states.user_states import UserState
 from aiogram.types import Message, CallbackQuery
 from keyboards.default_inline_keyboards import inline_keyboards
-from handlers.main_menu import main_menu
+from handlers.user_menu.main_menu import main_menu
 from handlers.admin_menu.send_logs import send_logs
 from handlers.admin_menu.send_users import send_users
 from handlers.admin_menu.input_id_user import input_id_user
-
-
-@dp.message_handler(commands=['admin'], state='*')
-async def start_admin_menu(message: Message):
-    logger.info(f'Пользователь {message.from_user.full_name} зашел в панель админа')
-    await admin_menu(message)
 
 
 async def admin_menu(message: Message):

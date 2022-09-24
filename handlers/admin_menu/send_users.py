@@ -4,7 +4,7 @@ import csv
 
 
 async def send_users(call: CallbackQuery):
-    from handlers.admin_menu.admin_menu import admin_menu
+    from handlers.admin_menu import admin_menu
 
     file ='database/all_users.csv'
     with open(file, mode="w", encoding='utf-8') as w_file:

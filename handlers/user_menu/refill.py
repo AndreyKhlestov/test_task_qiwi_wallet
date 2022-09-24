@@ -27,7 +27,7 @@ async def refill_num_money(message: Message, state: FSMContext):
         keyboard.add(button_1, button_2)
 
         await message.answer(f'Платеж на сумму {num_money} руб. успешно создан', reply_markup=keyboard)
-        await UserState.next()
+        await UserState.wait_pay.set()
     else:
         logger.info(f'Пользователь {message.from_user.full_name} ввел некорректную сумму')
         await message.answer(check)

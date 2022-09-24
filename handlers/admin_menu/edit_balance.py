@@ -16,7 +16,7 @@ async def edit_balance_user(message: Message, user_id: int):
 
 @dp.message_handler(state=UserState.input_edit_balance)
 async def check_user_id(message: Message, state: FSMContext):
-    from handlers.admin_menu.admin_menu import admin_menu
+    from handlers.admin_menu import admin_menu
     check = check_num(message.text)  # проверка - является ли введенный текст подходящим критериям числом
     if isinstance(check, float):
         user_id = (await state.get_data())['user_id']

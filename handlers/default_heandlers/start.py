@@ -2,9 +2,9 @@ from loader import dp
 from my_logger.loger import logger
 from states.user_states import UserState
 from aiogram.types import Message
-from handlers.main_menu import main_menu
+from handlers.user_menu.main_menu import main_menu
 from config import id_admin
-from handlers.admin_menu.admin_menu import start_admin_menu
+from handlers.default_heandlers.admin import admin
 from database.models import Users
 
 
@@ -29,6 +29,6 @@ async def start(message: Message):
                              f'Я - бот для пополнения баланса.')
 
         if id_admin == user_id:
-            await start_admin_menu(message)
+            await admin(message)
         else:
             await main_menu(message)

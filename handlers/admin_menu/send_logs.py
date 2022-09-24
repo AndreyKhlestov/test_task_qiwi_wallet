@@ -4,7 +4,7 @@ import os
 
 
 async def send_logs(call: CallbackQuery):
-    from handlers.admin_menu.admin_menu import admin_menu
+    from handlers.admin_menu import admin_menu
     for level in names_levels_log:
         file = f'my_logger/logs/{level}.log'
         if os.stat(file).st_size == 0:
