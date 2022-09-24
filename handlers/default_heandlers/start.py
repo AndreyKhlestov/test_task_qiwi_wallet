@@ -8,7 +8,7 @@ from handlers.default_heandlers.admin import admin
 from database.models import Users
 
 
-@dp.message_handler(commands=['start'])
+@dp.message_handler(commands=['start'], state='*')
 async def start(message: Message):
     await UserState.start.set()
 
@@ -16,19 +16,16 @@ async def start(message: Message):
     user_id = message.from_user.id
     user_info = Users.select().where(Users.user_id == user_id)
 
+    logger.info(f'Пользователь {user_name} запустил бота')
+
     if len(user_info) == 0:
         logger.info(f'Новый пользователь {user_name} добавлен в базу')
-        user_info = Users.create(user_id=user_id, user_name=user_name, balance=0, block=False)
+        Users.create(user_id=user_id, user_name=user_name, balance=0, block=False)
 
-    if user_info.get().block:
-        logger.info(f'Заблокированный пользователь {user_name} попытался запустить бота')
-        await message.answer('Вы заблокированы')
+    await message.answer(f'Привет, {user_name}\n'
+                         f'Я - бот для пополнения баланса.')
+
+    if id_admin == user_id:
+        await admin(message)
     else:
-        logger.info(f'Пользователь {user_name} запустил бота')
-        await message.answer(f'Привет, {user_name}\n'
-                             f'Я - бот для пополнения баланса.')
-
-        if id_admin == user_id:
-            await admin(message)
-        else:
-            await main_menu(message)
+        await main_menu(message)

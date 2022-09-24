@@ -1,10 +1,9 @@
 from aiogram.types import Message
 from loader import dp
 from database.models import Users
-# from config import banned_users
-# from handlers.handle_banned import banned_users
 from states.user_states import UserState
 from config import id_admin
+from my_logger.loger import logger
 
 
 async def block_user(message: Message, user_id: int):
@@ -21,5 +20,6 @@ async def block_user(message: Message, user_id: int):
         Users.update(block=True).where(Users.user_id == user_id).execute()
         await dp.current_state(chat=user_id, user=user_id).set_state(UserState.ban)
         await message.answer(f'{first_text} заблокирован(а)')
+        logger.info(f'Администратор {message.from_user.full_name} заблокировал пользователя (id {user_id})')
 
     await admin_menu(message)

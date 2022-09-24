@@ -5,6 +5,7 @@ from aiogram.types import Message
 from database.models import Users
 from aiogram.dispatcher import FSMContext
 from utils.check_num import check_num
+from config import DEFAULT_COMMANDS
 
 
 async def edit_balance_user(message: Message, user_id: int):
@@ -14,9 +15,9 @@ async def edit_balance_user(message: Message, user_id: int):
                          f'Какую сумму вы хотите установить пользователю?')
 
 
-@dp.message_handler(state=UserState.input_edit_balance)
+@dp.message_handler(lambda message: message.text not in DEFAULT_COMMANDS, state=UserState.input_edit_balance)
 async def check_user_id(message: Message, state: FSMContext):
-    from handlers.admin_menu import admin_menu
+    from handlers.admin_menu.admin_menu import admin_menu
     check = check_num(message.text)  # проверка - является ли введенный текст подходящим критериям числом
     if isinstance(check, float):
         user_id = (await state.get_data())['user_id']
@@ -24,7 +25,7 @@ async def check_user_id(message: Message, state: FSMContext):
         Users.update(balance=new_balance).where(Users.user_id == user_id).execute()
         await message.answer(f'Баланс изменен.\n'
                              f'Теперь у пользователя на балансе {new_balance} руб.')
+        logger.info(f'Администратор {message.from_user.full_name} изменил баланс пользователя (id {user_id})')
         await admin_menu(message)
-    else:
-        logger.info(f'Администратор {message.from_user.full_name} ввел некорректную сумму')
+    else:  # ввел некорректную сумму баланса
         await message.answer(check)

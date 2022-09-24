@@ -20,7 +20,4 @@ lifetime = 5
 
 names_levels_log = ['debug', 'info', 'warning', 'error', 'critical']
 
-# banned_users = set()
-# all_block_users = Users.select().where(Users.block == True)
-# for i_user in all_block_users:
-#     banned_users.add(i_user.user_id)
+DEFAULT_COMMANDS = ('/admin', '/start', '/help')

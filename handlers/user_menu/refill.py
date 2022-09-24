@@ -8,9 +8,11 @@ from loader import p2p
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.dispatcher import FSMContext
 from database.models import Users
+from config import DEFAULT_COMMANDS
 
 
-@dp.message_handler(state=UserState.refill)
+@dp.message_handler(lambda message: message.text not in DEFAULT_COMMANDS,
+                    state=UserState.refill)
 async def refill_num_money(message: Message, state: FSMContext):
     check = check_num(message.text)  # проверка - является ли введенный текст подходящим критериям числом
     if isinstance(check, float):
@@ -35,7 +37,6 @@ async def refill_num_money(message: Message, state: FSMContext):
 
 @dp.callback_query_handler(state=UserState.wait_pay)
 async def check_pay(call: CallbackQuery, state: FSMContext):
-    logger.info(f'Пользователь {call.from_user.full_name} проверяет оплату')
     bill_id = (await state.get_data())['bill_id']
     bill = await p2p.check(bill_id=bill_id)
     status = bill.status
@@ -56,8 +57,19 @@ async def check_pay(call: CallbackQuery, state: FSMContext):
         else:
             text = 'Время жизни счета истекло. Счет не оплачен'
 
+        logger.info(f'Пользователь {call.from_user.full_name} проверяет оплату. Статус счета: {status}')
+
         await call.answer(text, show_alert=True)
-        await UserState.next()
+        await UserState.finish.set()
         await call.message.answer(text)
         await call.message.answer('Если вы хотите повторно пополнить баланс, то нажмите /start')
 
+
+@dp.message_handler(lambda message: message.text not in DEFAULT_COMMANDS,
+                    state=UserState.wait_pay)
+async def input_wait_pay(message: Message):
+    logger.info(f'Пользователь {message.from_user.full_name} написал боту во время подтверждения платежа')
+    await message.answer('Ожидается подтверждение оплаты платежа.\n'
+                         'Если вы уже оплатили его, нажмите на кнопку "Проверка платежа" (под сообщением выше) '
+                         'для его подтверждения\n'
+                         'Если вы хотите начать сначала не оплатив счет, нажмите /start')

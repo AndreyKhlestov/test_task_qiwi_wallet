@@ -10,6 +10,7 @@ from handlers.admin_menu.input_id_user import input_id_user
 
 
 async def admin_menu(message: Message):
+    logger.info(f'Пользователь {message.from_user.full_name} зашел в панель админа')
     await UserState.admin_menu.set()
     buttons = ['Выгрузка пользователей',
                'Выгрузка логов',
@@ -25,23 +26,24 @@ async def admin_menu(message: Message):
 
 @dp.callback_query_handler(state=UserState.admin_menu)
 async def refill_button(call: CallbackQuery):
-    await call.message.edit_text(call.message.text)  # Удаляем у предыдущего сообщения кнопки путем редактирования
+    command = call.data  # Текст команды
+    text = call.message.text.replace('Выберите нужную команду:', f'Команда: {command}')
+    await call.message.edit_text(text)  # Изменяем предыдущее сообщение
 
-    text = call.data  # Текст команды
-    await call.message.answer(text)  # Вывод выбранной команды
-
-    if text == 'Выход из панели админа':
-        logger.info(f'{call.message.from_user.full_name} вышел из панели админа')
+    if command == 'Выход из панели админа':
+        logger.info(f'Администратор {call.message.from_user.full_name} вышел из панели админа')
         await main_menu(call.message)
-    elif text == 'Выгрузка логов':
-        logger.info(f'{call.message.from_user.full_name} выполнил выгрузку логов')
+
+    elif command == 'Выгрузка логов':
         await send_logs(call)
-    elif text == 'Выгрузка пользователей':
-        logger.info(f'{call.message.from_user.full_name} выполнил выгрузку пользователей')
+
+    elif command == 'Выгрузка пользователей':
         await send_users(call)
-    elif text == 'Изменить баланс пользователя':
+
+    elif command == 'Изменить баланс пользователя':
         await UserState.edit_balance.set()
         await input_id_user(call)
-    elif text == 'Блокировка пользователя':
+
+    elif command == 'Блокировка пользователя':
         await UserState.block_user.set()
         await input_id_user(call)

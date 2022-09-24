@@ -5,13 +5,15 @@ from database.models import Users
 from aiogram.dispatcher import FSMContext
 from handlers.admin_menu.edit_balance import edit_balance_user
 from handlers.admin_menu.block_user import block_user
+from config import DEFAULT_COMMANDS
 
 
 async def input_id_user(call: CallbackQuery):
     await call.message.answer('Введите id пользователя')
 
 
-@dp.message_handler(state=[UserState.edit_balance, UserState.block_user])
+@dp.message_handler(lambda message: message.text not in DEFAULT_COMMANDS,
+                    state=[UserState.edit_balance, UserState.block_user])
 async def check_user_id(message: Message, state: FSMContext):
     text = message.text
     if text.isdigit():

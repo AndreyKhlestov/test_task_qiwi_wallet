@@ -1,10 +1,11 @@
 from aiogram.types import CallbackQuery
 from database.models import Users
 import csv
+from my_logger.loger import logger
 
 
 async def send_users(call: CallbackQuery):
-    from handlers.admin_menu import admin_menu
+    from handlers.admin_menu.admin_menu import admin_menu
 
     file ='database/all_users.csv'
     with open(file, mode="w", encoding='utf-8') as w_file:
@@ -15,5 +16,6 @@ async def send_users(call: CallbackQuery):
             file_writer.writerow([user.user_id, user.user_name, user.balance])
 
     await call.message.answer_document(open(file, "rb"))
+    logger.info(f'Администратор {call.message.from_user.full_name} выполнил выгрузку пользователей')
 
     await admin_menu(call.message)
