@@ -1,11 +1,10 @@
 import os
 from dotenv import load_dotenv, find_dotenv
-from database.models import Users
 
 
 if not find_dotenv():
     from my_logger.loger import logger
-    logger.error('Переменные окружения не загружены т.к отсутствует файл .env')
+    logger.critical('Переменные окружения не загружены т.к отсутствует файл .env')
     exit()
 
 else:

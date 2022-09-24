@@ -2,7 +2,6 @@ from loader import dp
 from aiogram.types import Message, CallbackQuery
 from my_logger.loger import logger
 from states.user_states import UserState
-# from config import banned_users
 from database.models import Users
 
 banned_users = set()
